@@ -1,0 +1,6 @@
+name: CTW
+version: 1.0.0
+depend: [FalconAPI]
+main: com.falconetwork.ctw.CTW
+description: FalconNetwork's CTW Gamemode.
+commands:
