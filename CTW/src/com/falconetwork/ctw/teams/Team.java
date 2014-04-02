@@ -10,6 +10,7 @@ import com.falconetwork.ctw.teams.events.TeamLeaveEvent;
 import com.falconetwork.ctw.util.TeamType;
 
 public abstract class Team {
+	protected int score;
 	private String name;
 	private int sizeLimit;
 	protected List<Player> players;
@@ -45,6 +46,17 @@ public abstract class Team {
 		return team;
 	}
 	
+	public static boolean inTeam(Team team, Player p) {
+		boolean flag = false;
+		for(Team t : teams) {
+			if(t.getPlayers().contains(p)) {
+				flag = true;
+				break;
+			}
+		}
+		return flag;
+	}
+	
 	public static void executeEvent(String team, Player p, int evt) {
 		Team t = getTeam(team);
 		if(t != null)
@@ -60,10 +72,15 @@ public abstract class Team {
 		}
 	}
 	
+	public abstract void scorePoint();
 	public abstract void onJoin(TeamJoinEvent e);
 	public abstract void onLeave(TeamLeaveEvent e);
 	
 	public abstract TeamType getType();
+	
+	public int getScore() {
+		return score;
+	}
 	
 	public String getName() {
 		return name;

@@ -1,5 +1,6 @@
 package com.falconetwork.ctw.teams;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import com.falconetwork.ctw.CPlayer;
@@ -12,6 +13,16 @@ public class TeamRed extends Team {
 
 	public TeamRed() {
 		super("Red");
+	}
+	
+	public void scorePoint() {
+		this.score++;
+		for(Player p : Bukkit.getOnlinePlayers()) {
+			if(Team.inTeam(this, p))
+				p.sendMessage(CTW.prefix + "§6 Your team scored a point!");
+			else
+				p.sendMessage(CTW.prefix + "§c The " + toString() + " §cscored a point!");
+		}
 	}
 	
 	public void onJoin(TeamJoinEvent e) {

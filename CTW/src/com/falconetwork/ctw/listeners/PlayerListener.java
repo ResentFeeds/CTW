@@ -11,10 +11,11 @@ import org.bukkit.inventory.ItemStack;
 
 import com.falconetwork.ctw.CPlayer;
 import com.falconetwork.ctw.CTW;
+import com.falconetwork.ctw.util.BlockUtils;
 import com.falconetwork.ctw.util.TeamType;
 
 public class PlayerListener implements Listener {
-
+	
 	@EventHandler
 	public void onPlayerDeath(PlayerDeathEvent e) {
 		Player pl = e.getEntity();
@@ -23,6 +24,8 @@ public class PlayerListener implements Listener {
 		if(pl.getKiller() != null || pl.getKiller() instanceof Player) {
 			CPlayer k = CTW.players.get(pl.getKiller().getUniqueId());
 			k.addKills(1);
+			if(p.isCarrying())
+				BlockUtils.dropWool(p, pl);
 		}
 	}
 	
@@ -57,6 +60,10 @@ public class PlayerListener implements Listener {
 				b.setType(Material.AIR);
 				b.setData((byte) 0);
 				pl.getInventory().addItem(new ItemStack(Material.WOOL, 1, (short) 14));
+			}
+			if(!p.isCarrying()) {
+				BlockUtils.pickupWool(p, pl);
+				p.setCarrying(true);
 			}
 		}
 	}

@@ -27,6 +27,7 @@ public class CPlayer {
 	private double kdr;
 	private Player player;
 	private File dataFile;
+	private boolean carrying;
 	private TeamType teamType;
 	
 	public CPlayer(Player player) {
@@ -146,6 +147,14 @@ public class CPlayer {
 	
 	public void calcKDR() {
 		this.kdr = (double) (kills / deaths);
+	}
+	
+	public boolean isCarrying() {
+		return carrying;
+	}
+	
+	public void setCarrying(boolean carrying) {
+		this.carrying = carrying;
 	}
 
 	public Team getTeam() {
