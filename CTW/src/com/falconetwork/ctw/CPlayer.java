@@ -9,7 +9,7 @@ import java.util.zip.GZIPInputStream;
 
 import org.bukkit.entity.Player;
 
-import com.falconetwork.ctw.util.Team;
+import com.falconetwork.ctw.util.TeamType;
 import com.falconetwork.fca.jnbt.CompoundTag;
 import com.falconetwork.fca.jnbt.DoubleTag;
 import com.falconetwork.fca.jnbt.IntTag;
@@ -21,15 +21,15 @@ public class CPlayer {
 	private int cash;
 	private int wins;
 	private int kills;
-	private Team team;
 	private int deaths;
 	private double kdr;
+	private TeamType team;
 	private Player player;
 	private File dataFile;
 	
 	public CPlayer(Player player) {
 		this.player = player;
-		this.team = Team.UNKNOWN;
+		this.team = TeamType.UNKNOWN;
 		this.dataFile = new File(CTW.playersFolder, player.getName() + ".dat");
 		
 		try {
@@ -146,11 +146,11 @@ public class CPlayer {
 		this.kdr = (double) (kills / deaths);
 	}
 
-	public Team getTeam() {
+	public TeamType getTeamType() {
 		return team;
 	}
 	
-	public void setTeam(Team team) {
+	public void setTeamType(TeamType team) {
 		this.team = team;
 	}
 	

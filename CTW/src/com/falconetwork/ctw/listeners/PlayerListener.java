@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack;
 
 import com.falconetwork.ctw.CPlayer;
 import com.falconetwork.ctw.CTW;
-import com.falconetwork.ctw.util.Team;
+import com.falconetwork.ctw.util.TeamType;
 
 public class PlayerListener implements Listener {
 
@@ -35,25 +35,25 @@ public class PlayerListener implements Listener {
 		CPlayer p = CTW.players.get(pl.getUniqueId());
 		if(b.getType() == Material.WOOL) {
 			// YELLOW
-			if(data == 4 && p.getTeam() == Team.YELLOW) {
+			if(data == 4 && p.getTeamType() == TeamType.YELLOW) {
 				b.setType(Material.AIR);
 				b.setData((byte) 0);
 				pl.getInventory().addItem(new ItemStack(Material.WOOL, 1, (short) 4));
 			}
 			// GREEN
-			if(data == 5 && p.getTeam() == Team.GREEN) {
+			if(data == 5 && p.getTeamType() == TeamType.GREEN) {
 				b.setType(Material.AIR);
 				b.setData((byte) 0);
 				pl.getInventory().addItem(new ItemStack(Material.WOOL, 1, (short) 5));
 			}
 			// BLUE
-			if(data == 11 && p.getTeam() == Team.BLUE) {
+			if(data == 11 && p.getTeamType() == TeamType.BLUE) {
 				b.setType(Material.AIR);
 				b.setData((byte) 0);
 				pl.getInventory().addItem(new ItemStack(Material.WOOL, 1, (short) 11));
 			}
 			// RED
-			if(data == 14 && p.getTeam() == Team.RED) {
+			if(data == 14 && p.getTeamType() == TeamType.RED) {
 				b.setType(Material.AIR);
 				b.setData((byte) 0);
 				pl.getInventory().addItem(new ItemStack(Material.WOOL, 1, (short) 14));
