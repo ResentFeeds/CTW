@@ -1,6 +1,6 @@
 package com.falconetwork.ctw.util;
 
-public enum Team {
+public enum TeamType {
 	GREEN,
 	YELLOW,
 	BLUE,
