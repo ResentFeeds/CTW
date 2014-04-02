@@ -11,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class CTW extends JavaPlugin {
+	public static String prefix = "§8[§cCTW§8] ";
 	public static File dataFolder, playersFolder;
 	public static Map<UUID, CPlayer> players = new HashMap<UUID, CPlayer>();
 	
