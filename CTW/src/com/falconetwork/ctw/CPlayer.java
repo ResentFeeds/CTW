@@ -163,6 +163,7 @@ public class CPlayer {
 	
 	public void setTeam(Team team) {
 		this.team = team;
+		this.teamType = team.getType();
 	}
 	
 	public TeamType getTeamType() {
@@ -179,6 +180,10 @@ public class CPlayer {
 
 	public Player getPlayer() {
 		return player;
+	}
+
+	public boolean isInTeam() {
+		return (team == null);
 	}
 	
 }

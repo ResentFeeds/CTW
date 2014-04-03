@@ -4,3 +4,6 @@ depend: [FalconAPI]
 main: com.falconetwork.ctw.CTW
 description: FalconNetwork's CTW Gamemode.
 commands:
+  team:
+    description: Team command.
+    usage: /<command> join/leave [blue/red/green/yellow]

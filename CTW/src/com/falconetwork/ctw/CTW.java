@@ -10,6 +10,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.falconetwork.ctw.commands.CommandTeamExec;
+
 public class CTW extends JavaPlugin {
 	public static String prefix = "§8[§cCTW§8] ";
 	public static File dataFolder, playersFolder;
@@ -17,6 +19,8 @@ public class CTW extends JavaPlugin {
 	
 	@Override 
 	public void onEnable() {
+		getCommand("team").setExecutor(new CommandTeamExec());
+		
 		for(Player pl : Bukkit.getOnlinePlayers()) {
 			CPlayer p = new CPlayer(pl);
 			players.put(pl.getUniqueId(), p);
