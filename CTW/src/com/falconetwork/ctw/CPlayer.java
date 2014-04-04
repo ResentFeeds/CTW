@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
 
 import com.falconetwork.ctw.teams.Team;
 import com.falconetwork.ctw.util.TeamType;
@@ -19,16 +20,16 @@ import com.falconetwork.fca.jnbt.NBTOutputStream;
 import com.falconetwork.fca.jnbt.Tag;
 
 public class CPlayer {
-	private int cash;
-	private int wins;
-	private int kills;
-	private Team team;
-	private int deaths;
-	private double kdr;
-	private Player player;
-	private File dataFile;
-	private boolean carrying;
-	private TeamType teamType;
+	private int cash = 0;
+	private int wins = 0;
+	private int kills = 0;
+	private int deaths = 0;
+	private Team team = null;
+	private double kdr = 0.0D;
+	private Player player = null;
+	private File dataFile = null;
+	private boolean carrying = false;
+	private TeamType teamType = null;
 	
 	public CPlayer(Player player) {
 		this.player = player;
@@ -53,7 +54,7 @@ public class CPlayer {
 			CompoundTag tag = (CompoundTag) in.readTag();
 			in.close();
 			Map<String, Tag> tags = tag.getValue();
-			if(tags.containsKey("KDR")) kdr = ((IntTag) tags.get("KDR")).getValue();
+			if(tags.containsKey("KDR")) kdr = ((DoubleTag) tags.get("KDR")).getValue();
 			if(tags.containsKey("Cash")) cash = ((IntTag) tags.get("Cash")).getValue();
 			if(tags.containsKey("Wins")) wins = ((IntTag) tags.get("Wins")).getValue();
 			if(tags.containsKey("Kills")) kills = ((IntTag) tags.get("Kills")).getValue();
@@ -155,6 +156,8 @@ public class CPlayer {
 	
 	public void setCarrying(boolean carrying) {
 		this.carrying = carrying;
+		for(PotionEffect e : player.getActivePotionEffects())
+			player.removePotionEffect(e.getType());
 	}
 
 	public Team getTeam() {
@@ -163,7 +166,10 @@ public class CPlayer {
 	
 	public void setTeam(Team team) {
 		this.team = team;
-		this.teamType = team.getType();
+		if(team == null)
+			this.teamType = TeamType.UNKNOWN;
+		else
+			this.teamType = team.getType();
 	}
 	
 	public TeamType getTeamType() {
@@ -183,7 +189,7 @@ public class CPlayer {
 	}
 
 	public boolean isInTeam() {
-		return (team == null);
+		return !(team == null);
 	}
 	
 }

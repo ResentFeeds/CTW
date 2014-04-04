@@ -3,10 +3,12 @@ package com.falconetwork.ctw.teams;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import com.falconetwork.ctw.teams.events.TeamJoinEvent;
 import com.falconetwork.ctw.teams.events.TeamLeaveEvent;
+import com.falconetwork.ctw.teams.events.TeamRespawnEvent;
 import com.falconetwork.ctw.util.TeamType;
 
 public abstract class Team {
@@ -75,8 +77,10 @@ public abstract class Team {
 	public abstract void scorePoint();
 	public abstract void onJoin(TeamJoinEvent e);
 	public abstract void onLeave(TeamLeaveEvent e);
+	public abstract void onRespawn(TeamRespawnEvent e);
 	
 	public abstract TeamType getType();
+	public abstract Location getSpawn();
 	
 	public int getScore() {
 		return score;

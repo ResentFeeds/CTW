@@ -29,36 +29,37 @@ public class CommandTeamExec implements CommandExecutor {
 							Validate.notNull(team, "Team must not be null! Name: " + args[1]);
 							TeamJoinEvent e = new TeamJoinEvent(team, pl);
 							Bukkit.getPluginManager().callEvent(e);
-							if(!e.isCancelled()) {
+							if (!e.isCancelled()) {
 								p.setTeam(team);
 								team.onJoin(e);
+								p.setCarrying(false);
 							}
 						} else
 							pl.sendMessage(CTW.prefix + "§4Error! §7You're already in a team!");
-					} else {
+					} else
 						pl.sendMessage(CTW.prefix + "§4Error! §7Usage: /team join [blue/red/green/yellow]");
-					}
-					if (args[0].equalsIgnoreCase("leave")) {
-						if (args.length == 1) {
-							if (p.isInTeam()) {
-								Team team = p.getTeam();
-								Validate.notNull(team, "Team must not be null!");
-								TeamLeaveEvent e = new TeamLeaveEvent(team, pl);
-								Bukkit.getPluginManager().callEvent(e);
-								if(!e.isCancelled()) {
-									p.setTeam(null);
-									team.onLeave(e);
-								}
-							} else
-								pl.sendMessage(CTW.prefix + "§4Error! §7You aren't in a team!");
+				}
+				if (args[0].equalsIgnoreCase("leave")) {
+					if (args.length == 1) {
+						if (p.isInTeam()) {
+							Team team = p.getTeam();
+							Validate.notNull(team, "Team must not be null!");
+							TeamLeaveEvent e = new TeamLeaveEvent(team, pl);
+							Bukkit.getPluginManager().callEvent(e);
+							if (!e.isCancelled()) {
+								p.setTeam(null);
+								team.onLeave(e);
+								p.setCarrying(false);
+							}
 						} else
-							pl.sendMessage(CTW.prefix + "§4Error! §7Usage: /team leave");
-					}
-				} else
-					pl.sendMessage(CTW.prefix + "§4Error! §7Usage: /team join/leave [blue/red/green/yellow]");
+							pl.sendMessage(CTW.prefix + "§4Error! §7You aren't in a team!");
+					} else
+						pl.sendMessage(CTW.prefix + "§4Error! §7Usage: /team leave");
+				}
 			} else
-				sender.sendMessage(ChatColor.stripColor(CTW.prefix) + "Error! You have to be a player to use /team");
-		}
+				pl.sendMessage(CTW.prefix + "§4Error! §7Usage: /team join/leave [blue/red/green/yellow]");
+		} else
+			sender.sendMessage(ChatColor.stripColor(CTW.prefix) + "Error! You have to be a player to use /team");
 		return true;
 	}
 

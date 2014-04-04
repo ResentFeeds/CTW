@@ -11,11 +11,10 @@ import org.bukkit.inventory.ItemStack;
 import com.falconetwork.ctw.CPlayer;
 import com.falconetwork.ctw.CTW;
 import com.falconetwork.ctw.teams.Team;
-import com.falconetwork.ctw.util.BlockUtils;
 import com.falconetwork.ctw.util.TeamType;
 
 public class BlockListener implements Listener {
-
+	
 	@EventHandler
 	@SuppressWarnings("deprecation")
 	public void onBlockPlace(BlockPlaceEvent e) {
@@ -41,7 +40,6 @@ public class BlockListener implements Listener {
 				Team.getTeam("Red").scorePoint();
 			}
 			if(p.isCarrying()) {
-				BlockUtils.dropWool(p, pl);
 				p.setCarrying(false);
 			}
 		}

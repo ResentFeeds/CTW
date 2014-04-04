@@ -5,12 +5,12 @@ import org.bukkit.entity.Player;
 import com.falconetwork.ctw.teams.Team;
 
 /**
- * Called when a player leaves a team.
+ * Called when a team scores a point.
  * @author Jatboy
  */
-public class TeamLeaveEvent extends TeamEvent {
+public class TeamScoreEvent extends TeamEvent {
 
-	public TeamLeaveEvent(Team team, Player player) {
+	public TeamScoreEvent(Team team, Player player) {
 		super(team, team.getType(), player);
 	}
 	

@@ -5,6 +5,7 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+import com.falconetwork.ctw.CTW;
 import com.falconetwork.ctw.teams.Team;
 import com.falconetwork.ctw.util.TeamType;
 
@@ -25,6 +26,7 @@ public class TeamEvent extends Event implements Cancellable {
 		if(team == null) isCancelled = true;
 		if(type == null) isCancelled = true;
 		if(player == null) isCancelled = true;
+		CTW.display.update();
 	}
 	
 	public Team getTeam() {

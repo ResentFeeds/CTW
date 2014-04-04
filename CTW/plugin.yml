@@ -7,3 +7,5 @@ commands:
   team:
     description: Team command.
     usage: /<command> join/leave [blue/red/green/yellow]
+  location:
+    descripton: Outputs location.
