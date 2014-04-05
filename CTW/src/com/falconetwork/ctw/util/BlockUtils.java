@@ -84,13 +84,52 @@ public class BlockUtils {
 		}
 	}
 	
+	public static boolean redObject(Location l) {
+		boolean objective = false;
+		int x = l.getBlockX(), y = l.getBlockY(), z = l.getBlockZ();
+		if((x == -691 && y == 53 && z == 530)) objective = true;
+		if((x == -691 && y == 53 && z == 519)) objective = true;
+		if((x == -680 && y == 53 && z == 519)) objective = true;
+		if((x == -680 && y == 53 && z == 530)) objective = true;
+		return objective;
+	}
+	
+	public static boolean blueObject(Location l) {
+		boolean objective = false;
+		int x = l.getBlockX(), y = l.getBlockY(), z = l.getBlockZ();
+		if((x == -691 && y == 53 && z == 623)) objective = true;
+		if((x == -691 && y == 53 && z == 634)) objective = true;
+		if((x == -680 && y == 53 && z == 634)) objective = true;
+		if((x == -680 && y == 53 && z == 623)) objective = true;
+		return objective;
+	}
+	
+	public static boolean greenObject(Location l) {
+		boolean objective = false;
+		int x = l.getBlockX(), y = l.getBlockY(), z = l.getBlockZ();
+		if((x == -639 && y == 53 && z == 571)) objective = true;
+		if((x == -628 && y == 53 && z == 571)) objective = true;
+		if((x == -628 && y == 53 && z == 582)) objective = true;
+		if((x == -639 && y == 53 && z == 582)) objective = true;
+		return objective;
+	}
+	
+	public static boolean yellowObject(Location l) {
+		boolean objective = false;
+		int x = l.getBlockX(), y = l.getBlockY(), z = l.getBlockZ();
+		if((x == -732 && y == 53 && z == 582)) objective = true;
+		if((x == -743 && y == 53 && z == 582)) objective = true;
+		if((x == -743 && y == 53 && z == 571)) objective = true;
+		if((x == -732 && y == 53 && z == 571)) objective = true;
+		return objective;
+	}
+	
 	/**
 	 * Checks if the location specified is in center tower not their spawn tower.
 	 */
 	public static boolean isObjective(Location l) {
 		boolean objective = false;
 		int x = l.getBlockX(), y = l.getBlockY(), z = l.getBlockZ();
-		// TODO: Code for checking if they are the pieces in the central tower not spawn.
 		if((x == -686 && y == 69 && z == 576)) objective = true; // RED
 		if((x == -685 && y == 69 && z == 576)) objective = true; // GREEN
 		if((x == -685 && y == 69 && z == 577)) objective = true; // BLUE

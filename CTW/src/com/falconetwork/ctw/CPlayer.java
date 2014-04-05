@@ -3,6 +3,7 @@ package com.falconetwork.ctw;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
@@ -26,15 +27,30 @@ public class CPlayer {
 	private int deaths = 0;
 	private Team team = null;
 	private double kdr = 0.0D;
+	private VIPShop shop = null;
 	private Player player = null;
 	private File dataFile = null;
+	private double donated = 0.0D;
 	private boolean carrying = false;
 	private TeamType teamType = null;
 	
 	public CPlayer(Player player) {
 		this.player = player;
+		this.shop = new VIPShop(this);
 		this.teamType = TeamType.UNKNOWN;
 		this.dataFile = new File(CTW.playersFolder, player.getName() + ".dat");
+		
+		// Getting donated amount from donator Database.
+		{
+			try {
+				ResultSet set = CTW.donators.querySQL("SELECT * FROM Donators WHERE player='" + player.getName() + "';");
+				if(set.next()) {
+					donated = set.getDouble("Donated");
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
 		
 		try {
 			if(!dataFile.exists()) {
@@ -80,6 +96,11 @@ public class CPlayer {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+	}
+	
+	public void openShop() {
+		shop.setup();
+		shop.open(player);
 	}
 	
 	public int getCash() {
@@ -156,8 +177,9 @@ public class CPlayer {
 	
 	public void setCarrying(boolean carrying) {
 		this.carrying = carrying;
-		for(PotionEffect e : player.getActivePotionEffects())
-			player.removePotionEffect(e.getType());
+		if(carrying == false)
+			for(PotionEffect e : player.getActivePotionEffects())
+				player.removePotionEffect(e.getType());
 	}
 
 	public Team getTeam() {
@@ -190,6 +212,18 @@ public class CPlayer {
 
 	public boolean isInTeam() {
 		return !(team == null);
+	}
+	
+	public void setDonated(double donated) {
+		this.donated = donated;
+	}
+	
+	public double getDonated() {
+		return donated;
+	}
+	
+	public VIPShop getShop() {
+		return shop;
 	}
 	
 }

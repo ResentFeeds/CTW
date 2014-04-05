@@ -10,7 +10,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -18,10 +20,12 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
 
 import com.falconetwork.ctw.CPlayer;
 import com.falconetwork.ctw.CTW;
 import com.falconetwork.ctw.teams.events.TeamRespawnEvent;
+import com.falconetwork.ctw.teams.events.TeamScoreEvent;
 import com.falconetwork.ctw.util.BlockUtils;
 import com.falconetwork.ctw.util.ChatUtils;
 import com.falconetwork.ctw.util.TeamType;
@@ -29,13 +33,44 @@ import com.falconetwork.ctw.util.TeamType;
 public class PlayerListener implements Listener {
 
 	@EventHandler
+	public void onInventoryClick(InventoryClickEvent e) {
+		Player pl = (Player) e.getWhoClicked();
+		CPlayer p = CTW.players.get(pl.getUniqueId());
+		if(!pl.isOp())
+			e.setCancelled(true);
+		int slot = e.getSlot();
+		if(e.getInventory().getTitle().equals(pl.getInventory().getTitle())) {
+			ItemStack item = pl.getInventory().getItem(slot);
+			if(item.getType() == Material.NETHER_STAR) {
+				e.setCancelled(true);
+				p.openShop();
+			}
+		}
+	}
+	
+	@EventHandler
+	public void onPlayerDrop(PlayerDropItemEvent e) {
+		e.setCancelled(true);
+	}
+	
+	@EventHandler
+	public void onTeamScore(TeamScoreEvent e) {
+		Player pl = e.getPlayer();
+		CPlayer p = CTW.players.get(pl.getUniqueId());
+		if(p.isCarrying())
+			p.setCarrying(false);
+	}
+	
+	@EventHandler
 	public void onPlayerRespawn(PlayerRespawnEvent e) {
 		final Player pl = e.getPlayer();
 		final CPlayer p = CTW.players.get(pl.getUniqueId());
 		Bukkit.getScheduler().runTaskLater(CTW.get(), new Runnable() {
 			public void run() {
 				if(p.getTeam() != null) {
-					p.getTeam().onRespawn(new TeamRespawnEvent(p.getTeam(), pl));
+					TeamRespawnEvent evt = new TeamRespawnEvent(p.getTeam(), pl);
+					Bukkit.getPluginManager().callEvent(evt);
+					p.getTeam().onRespawn(evt);
 				}
 			}
 		}, 1L);
@@ -72,7 +107,14 @@ public class PlayerListener implements Listener {
 			e.setCancelled(true);
 			Player pl = e.getPlayer();
 			CPlayer p = CTW.players.get(pl.getUniqueId());
-			p.getTeam().onRespawn(new TeamRespawnEvent(p.getTeam(), pl));
+			if(p.getTeam() != null) {
+				TeamRespawnEvent evt = new TeamRespawnEvent(p.getTeam(), pl);
+				Bukkit.getPluginManager().callEvent(evt);
+				p.getTeam().onRespawn(evt);
+			} else {
+				pl.setVelocity(new Vector(0, 0, 0));
+				pl.teleport(new Location(Bukkit.getWorlds().get(0), -686, 54, 577));
+			}
 		}
 	}
 
@@ -110,6 +152,8 @@ public class PlayerListener implements Listener {
 			if (p.isCarrying())
 				BlockUtils.dropWool(p, pl, p.getTeamType());
 		}
+		e.getDrops().clear();
+		e.setDroppedExp(0);
 	}
 
 	@EventHandler
@@ -117,6 +161,10 @@ public class PlayerListener implements Listener {
 	public void onPlayerInteract(PlayerInteractEvent e) {
 		Player pl = e.getPlayer();
 		Block b = e.getClickedBlock();
+		if(pl.getItemInHand().getType() == Material.NETHER_STAR) {
+			CPlayer p = CTW.players.get(pl.getUniqueId());
+			p.openShop();
+		}
 		if (b != null) {
 			CPlayer p = CTW.players.get(pl.getUniqueId());
 			if (b.getType() == Material.WOOL) {

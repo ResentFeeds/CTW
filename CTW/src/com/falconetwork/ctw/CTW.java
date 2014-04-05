@@ -28,6 +28,7 @@ public class CTW extends JavaPlugin {
 	public static String prefix = "§8[§cCTW§8] ";
 	public static File dataFolder, playersFolder;
 	public static Map<UUID, CPlayer> players = new HashMap<UUID, CPlayer>();
+	public static Map<String, Float> vipPerks = new HashMap<String, Float>();
 	
 	@Override 
 	public void onEnable() {
@@ -83,7 +84,7 @@ public class CTW extends JavaPlugin {
 				String user = props.getProperty("user").replaceAll("'", "");
 				String pass = props.getProperty("pass").replaceAll("'", "");
 				ranks = new MySQL(this, "thefalconetwork.com", "", "CTW/ranks.db", user, pass);
-				donators = new MySQL(this, "thefalconetwork.com", "25565", "CTW/donators.db", user, pass);
+				donators = new MySQL(this, "thefalconetwork.com", "3306", "CTW/donators.db", user, pass);
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -92,6 +93,13 @@ public class CTW extends JavaPlugin {
 	
 	private void closeSQL() {
 		try {
+			for(Player pl : Bukkit.getOnlinePlayers()) {
+				CPlayer p = players.get(pl.getUniqueId());
+				if(p != null) {
+					ranks.querySQL("UPDATE Donators SET Player='" + pl.getName() + "', Donated='" + p.getDonated() + "' WHERE Player='" + pl.getName() + "';");
+				}
+			}
+			
 			ranks.closeConnection();
 			donators.closeConnection();
 		} catch (Exception ex) {

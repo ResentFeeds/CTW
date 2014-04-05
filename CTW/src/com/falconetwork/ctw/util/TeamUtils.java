@@ -40,10 +40,11 @@ public class TeamUtils {
 	
 	public static int teamToInt(Team t) {
 		int team = -1;
-		if(t.getName().equals("Red")) team = 0;
-		if(t.getName().equals("Blue")) team = 1;
-		if(t.getName().equals("Green")) team = 2;
-		if(t.getName().equals("Yellow")) team = 3;
+		if(t.getName().equals("Red")) team = 0; else
+		if(t.getName().equals("Blue")) team = 1; else
+		if(t.getName().equals("Green")) team = 2; else
+		if(t.getName().equals("Yellow")) team = 3; else
+		team = -1;
 		return team;
 	}
 	

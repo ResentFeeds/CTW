@@ -12,6 +12,7 @@ import com.falconetwork.ctw.CTW;
 import com.falconetwork.ctw.teams.events.TeamJoinEvent;
 import com.falconetwork.ctw.teams.events.TeamLeaveEvent;
 import com.falconetwork.ctw.teams.events.TeamRespawnEvent;
+import com.falconetwork.ctw.util.InventoryUtils;
 import com.falconetwork.ctw.util.TeamType;
 
 public class TeamYellow extends Team {
@@ -28,6 +29,7 @@ public class TeamYellow extends Team {
 			else
 				p.sendMessage(CTW.prefix + "§c The " + toString() + "§c team scored a point!");
 		}
+		CTW.display.update();
 	}
 
 	public void onJoin(TeamJoinEvent e) {
@@ -38,7 +40,7 @@ public class TeamYellow extends Team {
 				CPlayer p = CTW.players.get(pl.getUniqueId());
 				p.setTeam(e.getTeam());
 				pl.teleport(getSpawn());
-				// TELEPORTATION, AND INVENTORY CODE HERE.
+				InventoryUtils.giveInventory(this, p, pl);
 				e.getPlayer().sendMessage(CTW.prefix + "§6You have joined " + toString() + "§6 team.");
 			}
 		}
@@ -61,9 +63,11 @@ public class TeamYellow extends Team {
 		if (e.getType() == TeamType.YELLOW) {
 			if (players.contains(e.getPlayer())) {
 				Player pl = e.getPlayer();
+				CPlayer p = CTW.players.get(pl.getUniqueId());
 				pl.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 20, 11));
 				pl.setVelocity(new Vector(0, 0, 0));
 				pl.teleport(getSpawn());
+				InventoryUtils.giveInventory(this, p, pl);
 			}
 		}
 	}
