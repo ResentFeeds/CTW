@@ -16,15 +16,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.falconetwork.ctw.commands.CommandLocationExec;
 import com.falconetwork.ctw.commands.CommandTeamExec;
 import com.falconetwork.ctw.listeners.BlockListener;
+import com.falconetwork.ctw.listeners.PerkListener;
 import com.falconetwork.ctw.listeners.PlayerListener;
 import com.falconetwork.ctw.teams.TeamsDisplay;
 import com.falconetwork.ctw.util.BlockUtils;
-import com.falconetwork.fca.jdb.MySQL;
 
 public class CTW extends JavaPlugin {
 	private static CTW INSTANCE;
 	public static TeamsDisplay display;
-	public static MySQL donators, ranks;
 	public static String prefix = "§8[§cCTW§8] ";
 	public static File dataFolder, playersFolder;
 	public static Map<UUID, CPlayer> players = new HashMap<UUID, CPlayer>();
@@ -37,6 +36,7 @@ public class CTW extends JavaPlugin {
 		
 		getCommand("team").setExecutor(new CommandTeamExec());
 		getCommand("location").setExecutor(new CommandLocationExec());
+		getServer().getPluginManager().registerEvents(new PerkListener(), this);
 		getServer().getPluginManager().registerEvents(new BlockListener(), this);
 		getServer().getPluginManager().registerEvents(new PlayerListener(), this);
 		
@@ -49,6 +49,8 @@ public class CTW extends JavaPlugin {
 				pl.sendMessage(prefix + "§7Sorry about the effects, hope this helps!");
 			}
 		}
+		
+		GameThread.id = getServer().getScheduler().scheduleSyncRepeatingTask(this, new GameThread(), 20L, 20L);
 	}
 	
 	@Override 
@@ -73,6 +75,8 @@ public class CTW extends JavaPlugin {
 		}
 		closeSQL();
 		BlockUtils.regenObjectives(Bukkit.getWorlds().get(0));
+		
+		getServer().getScheduler().cancelTasks(this);
 	}
 	
 	private void initSQL() {
@@ -81,10 +85,8 @@ public class CTW extends JavaPlugin {
 			FileInputStream in = new FileInputStream(new File(getDataFolder(), "database.properties"));
 			props.load(in);
 			{
-				String user = props.getProperty("user").replaceAll("'", "");
-				String pass = props.getProperty("pass").replaceAll("'", "");
-				ranks = new MySQL(this, "thefalconetwork.com", "", "CTW/ranks.db", user, pass);
-				donators = new MySQL(this, "thefalconetwork.com", "3306", "CTW/donators.db", user, pass);
+				//String user = props.getProperty("user").replaceAll("'", "");
+				//String pass = props.getProperty("pass").replaceAll("'", "");
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -93,15 +95,7 @@ public class CTW extends JavaPlugin {
 	
 	private void closeSQL() {
 		try {
-			for(Player pl : Bukkit.getOnlinePlayers()) {
-				CPlayer p = players.get(pl.getUniqueId());
-				if(p != null) {
-					ranks.querySQL("UPDATE Donators SET Player='" + pl.getName() + "', Donated='" + p.getDonated() + "' WHERE Player='" + pl.getName() + "';");
-				}
-			}
 			
-			ranks.closeConnection();
-			donators.closeConnection();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

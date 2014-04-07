@@ -3,8 +3,9 @@ package com.falconetwork.ctw;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
@@ -33,20 +34,23 @@ public class CPlayer {
 	private double donated = 0.0D;
 	private boolean carrying = false;
 	private TeamType teamType = null;
+	private List<String> perks = null;
 	
 	public CPlayer(Player player) {
 		this.player = player;
 		this.shop = new VIPShop(this);
 		this.teamType = TeamType.UNKNOWN;
+		this.perks = new ArrayList<String>();
 		this.dataFile = new File(CTW.playersFolder, player.getName() + ".dat");
 		
 		// Getting donated amount from donator Database.
 		{
 			try {
-				ResultSet set = CTW.donators.querySQL("SELECT * FROM Donators WHERE player='" + player.getName() + "';");
+				/*ResultSet set = CTW.donators.querySQL("SELECT * FROM [Donators] WHERE Player='" + player.getName() + "';");
 				if(set.next()) {
 					donated = set.getDouble("Donated");
-				}
+				}*/
+				loadPerks();
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
@@ -63,6 +67,16 @@ public class CPlayer {
 		}
 	}
 	
+	public void loadPerks() {
+		if(donated >= 2.50) {
+			perks.add("vipArmor");
+			perks.add("vipNametag");
+			perks.add("vipWeapons");
+		}
+		if(donated >= 3.50)
+			perks.add("invisiblity");
+	}
+	
 	public void load() {
 		try {
 			FileInputStream fin = new FileInputStream(dataFile);
@@ -76,9 +90,9 @@ public class CPlayer {
 			if(tags.containsKey("Kills")) kills = ((IntTag) tags.get("Kills")).getValue();
 			if(tags.containsKey("Deaths")) deaths = ((IntTag) tags.get("Deaths")).getValue();
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			System.err.println("[CTW] LOAD ERROR: " + ex.getMessage());
 		}
-	} 
+	}
 	
 	public void save() {
 		try {
@@ -94,13 +108,34 @@ public class CPlayer {
 			out.writeTag(tag);
 			out.close();
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			System.err.println("[CTW] SAVE ERROR: " + ex.getMessage());
 		}
 	}
 	
 	public void openShop() {
 		shop.setup();
 		shop.open(player);
+	}
+	
+	public void addPerk(String perk) {
+		if(!perks.contains(perk))
+			perks.add(perk);
+	}
+	
+	public void removePerk(String perk) {
+		if(perks.contains(perk))
+			perks.remove(perk);
+	}
+	
+	public boolean hasPerk(String perk) {
+		boolean flag = false;
+		for(String p : perks)
+			if(p.equalsIgnoreCase(perk)) {
+				flag = true;
+				break;
+			}
+				
+		return flag;
 	}
 	
 	public int getCash() {
@@ -224,6 +259,14 @@ public class CPlayer {
 	
 	public VIPShop getShop() {
 		return shop;
+	}
+	
+	public List<String> getPerks() {
+		return perks;
+	}
+	
+	public void setPerks(List<String> perks) {
+		this.perks = perks;
 	}
 	
 }

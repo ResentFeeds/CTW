@@ -3,14 +3,17 @@ package com.falconetwork.ctw.listeners;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -24,50 +27,52 @@ import org.bukkit.util.Vector;
 
 import com.falconetwork.ctw.CPlayer;
 import com.falconetwork.ctw.CTW;
+import com.falconetwork.ctw.GameThread;
 import com.falconetwork.ctw.teams.events.TeamRespawnEvent;
 import com.falconetwork.ctw.teams.events.TeamScoreEvent;
 import com.falconetwork.ctw.util.BlockUtils;
 import com.falconetwork.ctw.util.ChatUtils;
+import com.falconetwork.ctw.util.NameUtils;
 import com.falconetwork.ctw.util.TeamType;
 
 public class PlayerListener implements Listener {
 
 	@EventHandler
 	public void onInventoryClick(InventoryClickEvent e) {
-		Player pl = (Player) e.getWhoClicked();
-		CPlayer p = CTW.players.get(pl.getUniqueId());
-		if(!pl.isOp())
-			e.setCancelled(true);
 		int slot = e.getSlot();
-		if(e.getInventory().getTitle().equals(pl.getInventory().getTitle())) {
-			ItemStack item = pl.getInventory().getItem(slot);
-			if(item.getType() == Material.NETHER_STAR) {
-				e.setCancelled(true);
-				p.openShop();
-			}
-		}
+		Player pl = (Player) e.getWhoClicked();
+		if((slot == 0 || slot == 1 || slot == 2 || slot == 8 || slot == 29) && pl.getGameMode() != GameMode.CREATIVE) e.setCancelled(true);
 	}
 	
+	@EventHandler
+	@SuppressWarnings("deprecation")
+	public void onInventoryClose(InventoryCloseEvent e) {
+		((Player) e.getPlayer()).updateInventory();
+	}
+
 	@EventHandler
 	public void onPlayerDrop(PlayerDropItemEvent e) {
 		e.setCancelled(true);
 	}
-	
+
 	@EventHandler
 	public void onTeamScore(TeamScoreEvent e) {
 		Player pl = e.getPlayer();
 		CPlayer p = CTW.players.get(pl.getUniqueId());
-		if(p.isCarrying())
+		if (p.isCarrying()) {
 			p.setCarrying(false);
+			pl.setMaxHealth(20.0);
+			pl.setHealth(20.0);
+		}
 	}
-	
+
 	@EventHandler
 	public void onPlayerRespawn(PlayerRespawnEvent e) {
 		final Player pl = e.getPlayer();
 		final CPlayer p = CTW.players.get(pl.getUniqueId());
 		Bukkit.getScheduler().runTaskLater(CTW.get(), new Runnable() {
 			public void run() {
-				if(p.getTeam() != null) {
+				if (p.getTeam() != null) {
 					TeamRespawnEvent evt = new TeamRespawnEvent(p.getTeam(), pl);
 					Bukkit.getPluginManager().callEvent(evt);
 					p.getTeam().onRespawn(evt);
@@ -75,7 +80,7 @@ public class PlayerListener implements Listener {
 			}
 		}, 1L);
 	}
-	
+
 	@EventHandler
 	public void onPlayerChat(AsyncPlayerChatEvent e) {
 		Player pl = e.getPlayer();
@@ -85,7 +90,7 @@ public class PlayerListener implements Listener {
 		e.setCancelled(true);
 		ChatUtils.customizeChat(message, pl, p, receivers);
 	}
-	
+
 	@EventHandler
 	public void onItemConsume(PlayerItemConsumeEvent e) {
 		final Player p = e.getPlayer();
@@ -101,13 +106,11 @@ public class PlayerListener implements Listener {
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent e) {
 		Location l = e.getTo();
-		if (l.getBlockY() >= 1)
-			return;
 		if (l.getBlockY() <= 0) {
 			e.setCancelled(true);
 			Player pl = e.getPlayer();
 			CPlayer p = CTW.players.get(pl.getUniqueId());
-			if(p.getTeam() != null) {
+			if (p.getTeam() != null) {
 				TeamRespawnEvent evt = new TeamRespawnEvent(p.getTeam(), pl);
 				Bukkit.getPluginManager().callEvent(evt);
 				p.getTeam().onRespawn(evt);
@@ -115,6 +118,12 @@ public class PlayerListener implements Listener {
 				pl.setVelocity(new Vector(0, 0, 0));
 				pl.teleport(new Location(Bukkit.getWorlds().get(0), -686, 54, 577));
 			}
+		} else {
+			Player pl = e.getPlayer();
+			Material to = l.getBlock().getRelative(BlockFace.DOWN).getType();
+			boolean canMove = (NameUtils.isDeveloper(pl) || NameUtils.isOwner(pl));
+			if ((to != Material.WOOL && to != Material.AIR) && GameThread.inGrace && !canMove)
+				e.setCancelled(true);
 		}
 	}
 
@@ -161,7 +170,7 @@ public class PlayerListener implements Listener {
 	public void onPlayerInteract(PlayerInteractEvent e) {
 		Player pl = e.getPlayer();
 		Block b = e.getClickedBlock();
-		if(pl.getItemInHand().getType() == Material.NETHER_STAR) {
+		if (pl.getItemInHand().getType() == Material.NETHER_STAR) {
 			CPlayer p = CTW.players.get(pl.getUniqueId());
 			p.openShop();
 		}

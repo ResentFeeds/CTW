@@ -12,17 +12,40 @@ public class NameUtils {
 	public static boolean isDeveloper(Player pl) {
 		boolean developer = false;
 		String name = pl.getName();
-		if(name.equalsIgnoreCase("jatboy")) developer = true;
+		if(name.equals("jatboy")) developer = true;
 		return developer;
 	}
 	
 	public static boolean isDonator(Player pl) {
 		boolean donator = false;
+		try {
+			/*ResultSet set = CTW.donators.querySQL("SELECT Player FROM [Donators]");
+			ResultSetMetaData data = set.getMetaData();
+			int columnCount = data.getColumnCount();
+			
+			String[] values = new String[columnCount];
+			
+			while (set.next()) {
+				for (int i = 1; i <= data.getColumnCount(); i++)
+					values[i - 1] = set.getString(i);
+			}
+			
+			for(String s : values) {
+				if(pl.getName().equals(s)) {
+					donator = true;
+					break;
+				}
+			}*/
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 		return donator;
 	}
 	
 	public static boolean isOwner(Player pl) {
 		boolean owner = false;
+		String name = pl.getName();
+		if(name.equals("Car12man")) owner = true;
 		return owner;
 	}
 	

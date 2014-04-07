@@ -22,15 +22,16 @@ public class ChatUtils {
 		boolean donator = NameUtils.isDonator(pl);
 		boolean owner = NameUtils.isOwner(pl);
 		boolean mod = NameUtils.isModerator(pl);
-		String nametag = "§8" + pl.getName() + "§r: ";
+		String nametag = "§8" + pl.getName() + "§r:§7 ";
 		if(dev) prefix = "§7[§cDev§7]§r ";
 		if(owner) prefix = "§7[§1Owner§7]§r ";
 		if(mod) prefix = "§7[§dModerator§7]§r ";
 		if(donator && (!dev && !owner && !mod)) prefix = "§7[§6Donator§7]§r ";
 		if(p.getTeam() != null)
 			prefix += "§7[" + p.getTeamType().colored() + "§7] ";
+		String finished = (prefix + nametag + message);
 		for(Player r : receivers) {
-			r.sendMessage(prefix + nametag + message);
+			r.sendMessage(finished);
 		}
 	}
 	

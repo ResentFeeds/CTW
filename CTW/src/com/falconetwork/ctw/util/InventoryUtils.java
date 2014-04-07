@@ -14,6 +14,14 @@ import com.falconetwork.ctw.CPlayer;
 import com.falconetwork.ctw.teams.Team;
 
 public class InventoryUtils {
+	
+	// The values are reversed due to way booleans work.
+	public static boolean canMove(int slot) {
+		boolean move = false;
+		if(slot == 0 || slot == 1 || slot == 2 || slot == 8 || slot == 29)
+			move = true;
+		return move;
+	}
 
 	public static void giveInventory(Team team, CPlayer p, Player pl) {
 		giveDefaults(pl);
